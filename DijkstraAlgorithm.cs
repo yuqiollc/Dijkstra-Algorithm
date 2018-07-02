@@ -8,53 +8,53 @@ using System.Threading.Tasks;
 class DijkstraAlgorithm
 {
     /// <summary>
-    /// Класс дуги
+    /// Edge class
     /// </summary>
     class Edge
     {
         /// <summary>
-        /// Узел с которого начинается дуга
+        /// Node of Edge start
         /// </summary>
         public Node Start;
         /// <summary>
-        /// Конечный узел дуги
+        /// End Node of Edge
         /// </summary>
         public Node End;
         /// <summary>
-        /// Вес дуги
+        /// Edge weight
         /// </summary>
         public float Weight;
     }
 
     /// <summary>
-    /// Класс узла
+    /// Node class
     /// </summary>
     class Node
     {
         /// <summary>
-        /// Индекс узла в матрице смежности
+        /// Node index in adjacency matrix
         /// </summary>
         public int Index;
         /// <summary>
-        /// Дуги которые принадлежат этому узлу
+        /// Edges connected to this Node
         /// </summary>
         public List<Edge> Edges = new List<Edge>();
         /// <summary>
-        /// Вес узла
+        /// Edge weight
         /// </summary>
         public float Weight;
         /// <summary>
-        /// Предыдущий узел с которого перешли в этот узел
+        /// Previous Node, from which we travelled to the current Node
         /// </summary>
         public Node PrevNode;
     }
 
     /// <summary>
-    /// Инициализация алгоритма
+    /// Algorithm initialization 
     /// </summary>
-    /// <param name="matrix">Матрица смежности</param>
-    /// <param name="start">Индекс стартовой точки</param>
-    /// <param name="end">Индекс конечной точки</param>
+    /// <param name="matrix">Adjacency matrix</param>
+    /// <param name="start">Start Node Index</param>
+    /// <param name="end">End Node Index</param>
     public DijkstraAlgorithm(float[,] matrix, int start, int end)
     {
         this._end = end;
@@ -65,18 +65,18 @@ class DijkstraAlgorithm
             _nodes.Add(newNode);
         }
 
-        //Инициализация узлов и дуг прилежным данным узлам
+        //Nodes and Edges initialization for given Nodes, connected to specified Nodes
         for (int i = 0; i < matrix.GetLength(0); i++)
         {
             _nodes[i].Index = i;
 
-            //Присваиваем начальной точке минимальный вес что бы алгоритм принял ее за стартовую
+            //Define weight for Start Node as minimal
             if (i == start)
                 _nodes[i].Weight = 0;
             else
                 _nodes[i].Weight = float.PositiveInfinity;
 
-            //Присваивание узлам дуги
+            //Connect Nodes with Edges
             for (int j = 0; j < _nodes.Count; j++)
             {
                 if (matrix[i, j] > 0)
@@ -92,26 +92,26 @@ class DijkstraAlgorithm
     }
 
     /// <summary>
-    /// Запуск алгоритма
+    /// Algorithm Launch
     /// </summary>
     /// <returns></returns>
     public int[] Run()
     {
-        //Узлы по которым алгоритм еще не проходился
+        //Unparsed Edges
         List<Node> notUsed = new List<Node>(_nodes);
 
         while (true)
         {
-            //Инициализация текущего узла по которому будет проходить алгоритм
+            //Initialization of current Node parsed by Algorithm
             Node CurrentNode = Min(notUsed);
 
             if (IsEndNode(CurrentNode))
                 return GetPath(CurrentNode);
 
-            //Проходим по каждому ребру текущего узла
+            //Check all Edges of current Node
             foreach (var edge in CurrentNode.Edges)
             {
-                //Если переход на следующий узел имеет меньший вес, обновляем вес и записываем точку с которой пришли
+                //If weight of Edge is lesser, update the weight and write down the Previous node.
                 if (CurrentNode.Weight + edge.Weight < edge.End.Weight)
                 {
                     edge.End.Weight = CurrentNode.Weight + edge.Weight;
@@ -119,13 +119,13 @@ class DijkstraAlgorithm
                 }
             }
 
-            //Удаляем из списка использованый узел
+            //Delete parsed Node from the list
             notUsed.Remove(CurrentNode);
         }
     }
 
     /// <summary>
-    /// Возвращает узел с наименьшим весом
+    /// Returns the Node with smallest weight
     /// </summary>
     /// <param name="nodes"></param>
     /// <returns></returns>
@@ -142,7 +142,7 @@ class DijkstraAlgorithm
     }
 
     /// <summary>
-    /// Является ли узел конечным
+    /// Test if the Node is End Node
     /// </summary>
     /// <param name="node"></param>
     /// <returns></returns>
@@ -155,9 +155,9 @@ class DijkstraAlgorithm
     }
 
     /// <summary>
-    /// Восстановление пути
+    /// Trace recovery
     /// </summary>
-    /// <param name="node">Конечный узел</param>
+    /// <param name="node">End node</param>
     /// <returns></returns>
     private int[] GetPath(Node node)
     {
@@ -176,7 +176,7 @@ class DijkstraAlgorithm
             }
             else
             {
-                //Задаем списку обратный порядок т.к. путь восстанавливается с конца
+                //Inverse order of the list (trace recovered from End point)
                 nodesPath.Reverse();
 
                 int[] path = new int[nodesPath.Count];
@@ -191,12 +191,12 @@ class DijkstraAlgorithm
     #region private variables
 
     /// <summary>
-    /// Лист всех узлов
+    /// List of all Nodes
     /// </summary>
     private List<Node> _nodes = new List<Node>();
 
     /// <summary>
-    /// Индекс конечной точки
+    /// Index of End Node
     /// </summary>
     private int _end;
 
